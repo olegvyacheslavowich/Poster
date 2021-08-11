@@ -3,6 +3,7 @@ package ru.simaland.poster.repository.auth
 import kotlinx.coroutines.flow.Flow
 import ru.simaland.poster.MediaUpload
 import ru.simaland.poster.auth.Auth
+import ru.simaland.poster.model.User
 
 interface AuthRepository {
 
@@ -21,4 +22,7 @@ interface AuthRepository {
 
     suspend fun login(login: String, password: String): Flow<Auth>
 
+    suspend fun saveCurrentUser(userId: Int)
+
+    suspend fun getCurrentUser(): User
 }

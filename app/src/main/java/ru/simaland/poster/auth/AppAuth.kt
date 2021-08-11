@@ -46,6 +46,7 @@ class AppAuth @Inject constructor(
             clear()
             commit()
         }
+        _authStateFlow.value = Auth()
     }
 
 }

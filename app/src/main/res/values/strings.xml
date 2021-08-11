@@ -12,5 +12,11 @@
     <string name="choose_photo">Выбрать из галереи</string>
     <string name="take_photo">Сделать новое</string>
     <string name="registration_error">Ошибка при регистрации. Повторите позднее</string>
-    <string name="login_error">Ошибка авторизации. Повторите позднее</string>
+    <string name="login_error">Неверный логин или пароль</string>
+    <string name="profile">Профиль</string>
+    <string name="jobs">Вакансии</string>
+    <string name="posts">Посты</string>
+    <string name="events">События</string>
+    <string name="logout">Выход</string>
+    <string name="unknown_error">Неизвестная ошибка. Повторите позднее</string>
 </resources>

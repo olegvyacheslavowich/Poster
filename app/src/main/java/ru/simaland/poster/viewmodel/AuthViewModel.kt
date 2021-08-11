@@ -10,6 +10,7 @@ import ru.simaland.poster.MediaUpload
 import ru.simaland.poster.PhotoModel
 import ru.simaland.poster.auth.AppAuth
 import ru.simaland.poster.auth.Auth
+import ru.simaland.poster.model.User
 import ru.simaland.poster.repository.auth.AuthRepository
 import ru.simaland.poster.state.AuthState
 import java.io.File
@@ -20,6 +21,10 @@ class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val appAuth: AppAuth
 ) : ViewModel() {
+
+    private val _currentUser: MutableLiveData<User> = MutableLiveData()
+    val currentUser: LiveData<User>
+        get() = _currentUser
 
     val authData: LiveData<Auth> = appAuth.authStateFlow.asLiveData(Dispatchers.Default)
 
@@ -42,13 +47,16 @@ class AuthViewModel @Inject constructor(
                 val auth = authRepository.login(login, password)
                 auth.collect {
                     appAuth.setAuth(it.id, it.token ?: "")
-
                 }
                 _state.value = AuthState.Success
             } catch (e: Exception) {
-                _state.value = AuthState.Error(e.message.toString())
+                _state.value = AuthState.Error(e.message.toString(), 2)
             }
         }
+    }
+
+    fun logout() {
+        appAuth.removeAuth()
     }
 
     fun register(
@@ -70,9 +78,23 @@ class AuthViewModel @Inject constructor(
                 }
                 _state.value = AuthState.Success
             } catch (e: Exception) {
+                _state.value = AuthState.Error(e.message.toString(), 1)
+            }
+        }
+    }
+
+    fun getCurrentUser() {
+        viewModelScope.launch {
+            try {
+                _state.value = AuthState.Loading
+                _currentUser.value = authRepository.getCurrentUser()
+                _state.value = AuthState.Success
+            } catch (e: Exception) {
                 _state.value = AuthState.Error(e.message.toString())
             }
         }
     }
+
+
 }
 

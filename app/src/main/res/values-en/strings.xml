@@ -13,5 +13,11 @@
     <string name="choose_photo">Choose from phone</string>
     <string name="take_photo">Take a photo</string>
     <string name="registration_error">Something went wrong. Please try again late</string>
-    <string name="login_error">Something went wrong. Please try again late</string>
+    <string name="login_error">Login or password is wrong</string>
+    <string name="profile">Profile</string>
+    <string name="jobs">Jobs</string>
+    <string name="posts">Posts</string>
+    <string name="events">Events</string>
+    <string name="logout">Exit</string>
+    <string name="unknown_error">Something went wrong. Please try again late</string>
 </resources>

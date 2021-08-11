@@ -1,19 +1,21 @@
 package ru.simaland.poster.repository.auth
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import ru.simaland.poster.MediaUpload
 import ru.simaland.poster.api.AuthApiService
 import ru.simaland.poster.auth.Auth
+import ru.simaland.poster.db.PosterDao
+import ru.simaland.poster.db.entity.toDto
+import ru.simaland.poster.model.User
+import ru.simaland.poster.model.toEntity
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
-    private val api: AuthApiService
+    private val api: AuthApiService,
+    private val dbDao: PosterDao
 ) : AuthRepository {
 
     override suspend fun register(
@@ -60,8 +62,29 @@ class AuthRepositoryImpl @Inject constructor(
             throw Exception(response.message())
         }
         val auth = response.body() ?: Auth()
+        if (auth.id != 0) {
+            saveCurrentUser(auth.id)
+        }
         emit(auth)
     }.catch { e ->
         throw e
     }.flowOn(Dispatchers.Default)
+
+    override suspend fun saveCurrentUser(userId: Int) {
+        val response = api.getUsers()
+        if (!response.isSuccessful) {
+            throw Exception(response.message())
+        }
+
+        val users = response.body() ?: emptyList()
+        if (users.isEmpty()) {
+            throw Exception("Something went wrong")
+        }
+
+        val currentUser = users.find { it.id == userId } ?: throw Exception("Something went wrong")
+        dbDao.updateUser(currentUser.toEntity())
+    }
+
+    override suspend fun getCurrentUser(): User = dbDao.getUser().toDto()
+
 }

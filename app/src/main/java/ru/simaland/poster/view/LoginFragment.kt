@@ -13,6 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.simaland.poster.R
 import ru.simaland.poster.databinding.FragmentLoginBinding
 import ru.simaland.poster.state.AuthState
+import ru.simaland.poster.util.getInfo
 import ru.simaland.poster.viewmodel.AuthViewModel
 
 @AndroidEntryPoint
@@ -51,12 +52,7 @@ class LoginFragment : Fragment() {
                 if (it == null || it.id == 0 || it.token == "") {
                     return@observe
                 }
-                Snackbar.make(
-                    this.root,
-                    "Вход выполнен!",
-                    Snackbar.LENGTH_SHORT
-                ).show()
-                //findNavController().navigate()
+                findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
             }
 
             viewModel.state.observe(viewLifecycleOwner) {
@@ -67,17 +63,12 @@ class LoginFragment : Fragment() {
                     is AuthState.Error -> {
                         Snackbar.make(
                             binding.root,
-                            R.string.registration_error,
+                            it.code.getInfo(),
                             Snackbar.LENGTH_LONG
                         ).show()
                         progressBar.isVisible = false
                     }
                     is AuthState.Success -> {
-                        Snackbar.make(
-                            this.root,
-                            "Вход выполнен!",
-                            Snackbar.LENGTH_SHORT
-                        ).show()
                         progressBar.isVisible = false
                     }
                 }

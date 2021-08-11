@@ -5,6 +5,7 @@ import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*
 import ru.simaland.poster.auth.Auth
+import ru.simaland.poster.model.User
 
 interface AuthApiService {
 
@@ -31,4 +32,7 @@ interface AuthApiService {
         @Field("login") login: String,
         @Field("pass") pass: String
     ): Response<Auth>
+
+    @GET("/api/users")
+    suspend fun getUsers(): Response<List<User>>
 }
