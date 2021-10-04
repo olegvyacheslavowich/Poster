@@ -8,7 +8,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import ru.simaland.poster.db.AppDatabase
-import ru.simaland.poster.db.PosterDao
+import ru.simaland.poster.db.EventDao
+import ru.simaland.poster.db.UserDao
 import javax.inject.Singleton
 
 @Module
@@ -24,5 +25,10 @@ class DBModule {
 
     @Provides
     @Singleton
-    fun provideDao(db: AppDatabase): PosterDao = db.posterDao()
+    fun provideUserDao(db: AppDatabase): UserDao = db.userDao()
+
+    @Provides
+    @Singleton
+    fun provideEventDao(db: AppDatabase): EventDao = db.eventDao()
+
 }

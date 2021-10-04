@@ -19,4 +19,12 @@
     <string name="events">События</string>
     <string name="logout">Выход</string>
     <string name="unknown_error">Неизвестная ошибка. Повторите позднее</string>
+    <string name="speakers">Спикеры:</string>
+    <string name="event_type_online">Онлайн</string>
+    <string name="event_type_offline">Офлайн</string>
+    <string name="choose_event_type">Выберите тип события</string>
+    <array name="choose_event_types">
+        <item>@string/event_type_online</item>
+        <item>@string/event_type_offline</item>
+    </array>
 </resources>

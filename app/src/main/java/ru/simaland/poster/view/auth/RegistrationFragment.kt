@@ -1,4 +1,4 @@
-package ru.simaland.poster.view
+package ru.simaland.poster.view.auth
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -15,20 +15,20 @@ import androidx.navigation.fragment.findNavController
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.InternalCoroutinesApi
 import ru.simaland.poster.R
 import ru.simaland.poster.databinding.FragmentRegistrationBinding
 import ru.simaland.poster.state.AuthState
+import ru.simaland.poster.util.buildPhotoMenu
+import ru.simaland.poster.util.cameraRequestCode
+import ru.simaland.poster.util.photoRequestCode
 import ru.simaland.poster.viewmodel.AuthViewModel
 
 @AndroidEntryPoint
 class RegistrationFragment : Fragment() {
 
     private val viewModel: AuthViewModel by viewModels()
-    private val photoRequestCode = 1
-    private val cameraRequestCode = 2
     private lateinit var binding: FragmentRegistrationBinding
-    
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -39,7 +39,7 @@ class RegistrationFragment : Fragment() {
         with(binding) {
 
             avatarCardView.setOnClickListener {
-                buildPhotoMenu().show()
+                this@RegistrationFragment.buildPhotoMenu().show()
             }
 
             createButton.setOnClickListener {
@@ -64,7 +64,9 @@ class RegistrationFragment : Fragment() {
                         progressBar.isVisible = false
                     }
                     is AuthState.Success -> {
-                        findNavController().navigate(R.id.action_registrationFragment_to_loginFragment)
+                        findNavController().apply {
+                            navigate(graph.startDestination)
+                        }
                         progressBar.isVisible = false
                     }
                 }
@@ -77,30 +79,6 @@ class RegistrationFragment : Fragment() {
             return binding.root
         }
     }
-
-    private fun buildPhotoMenu() =
-        AlertDialog.Builder(this.activity)
-            .setTitle(R.string.photo_choose)
-            .setPositiveButton(R.string.choose_photo) { _, _ ->
-                ImagePicker.with(this)
-                    .crop()
-                    .compress(2048)
-                    .galleryOnly()
-                    .galleryMimeTypes(
-                        arrayOf(
-                            "image/png", "image/jpeg"
-                        )
-                    )
-                    .start(photoRequestCode)
-            }
-            .setNeutralButton(R.string.take_photo) { _, _ ->
-                ImagePicker.with(this)
-                    .crop()
-                    .compress(2048)
-                    .cameraOnly()
-                    .start(cameraRequestCode)
-            }
-            .create()
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
@@ -116,8 +94,6 @@ class RegistrationFragment : Fragment() {
             val file = uri?.toFile()
             viewModel.changePhoto(uri, file)
         }
-
-
     }
 }
 

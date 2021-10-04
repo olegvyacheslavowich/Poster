@@ -20,4 +20,12 @@
     <string name="events">Events</string>
     <string name="logout">Exit</string>
     <string name="unknown_error">Something went wrong. Please try again late</string>
+    <string name="speakers">Speakers:</string>
+    <string name="event_type_online">Online</string>
+    <string name="event_type_offline">Offline</string>
+    <string name="choose_event_type">Choose event type</string>
+    <array name="choose_event_types">
+        <item>@string/event_type_online</item>
+        <item>@string/event_type_offline</item>
+    </array>
 </resources>

@@ -1,4 +1,4 @@
-package ru.simaland.poster.view
+package ru.simaland.poster.view.auth
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -52,7 +52,9 @@ class LoginFragment : Fragment() {
                 if (it == null || it.id == 0 || it.token == "") {
                     return@observe
                 }
-                findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+                findNavController().apply {
+                    navigate(graph.startDestination)
+                }
             }
 
             viewModel.state.observe(viewLifecycleOwner) {
@@ -82,4 +84,8 @@ class LoginFragment : Fragment() {
         return binding.root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        loginClicked = false
+    }
 }

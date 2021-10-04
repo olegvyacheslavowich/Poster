@@ -13,8 +13,11 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 import ru.simaland.poster.BuildConfig
+import ru.simaland.poster.api.ApiService
 import ru.simaland.poster.api.AuthApiService
 import ru.simaland.poster.auth.AppAuth
+import ru.simaland.poster.util.token
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
@@ -40,35 +43,75 @@ class ApiModule {
 
     @Provides
     @Singleton
-    fun provideOkhttp(prefs: SharedPreferences, logging: HttpLoggingInterceptor): OkHttpClient =
+    @AuthOkHttpClient
+    fun provideAuthOkhttp(logging: HttpLoggingInterceptor): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(logging)
-//            .addInterceptor { chain ->
-//                prefs.token?.let { token ->
-//                    val newRequest = chain.request().newBuilder()
-//                        .addHeader("Authorization", token)
-//                        .build()
-//                    return@addInterceptor chain.proceed(newRequest)
-//                }
-//                chain.proceed(chain.request())
-//            }
+            .build()
+
+    @Provides
+    @Singleton
+    @ApiServiceOkHttpClient
+    fun provideOkhttp(
+        prefs: SharedPreferences,
+        logging: HttpLoggingInterceptor
+    ): OkHttpClient =
+        OkHttpClient.Builder()
+            .addInterceptor(logging)
+            .addInterceptor { chain ->
+                prefs.token?.let { token ->
+                    val newRequest = chain.request().newBuilder()
+                        .addHeader("Authorization", token)
+                        .build()
+                    return@addInterceptor chain.proceed(newRequest)
+                }
+                chain.proceed(chain.request())
+            }
             .build()
 
 
     @Provides
     @Singleton
-    fun provideRetrofit(okhttp: OkHttpClient): Retrofit = Retrofit.Builder()
-        .addConverterFactory(GsonConverterFactory.create())
-        .baseUrl(BuildConfig.BASE_URL)
-        .client(okhttp)
-        .build()
+    @AuthRetrofit
+    fun provideAuthRetrofit(@AuthOkHttpClient okhttp: OkHttpClient): Retrofit =
+        Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl(BuildConfig.BASE_URL)
+            .client(okhttp)
+            .build()
 
     @Provides
     @Singleton
-    fun provideAuthApiService(retrofit: Retrofit): AuthApiService = retrofit.create()
+    @ApiServiceRetrofit
+    fun provideApiServiceRetrofit(@ApiServiceOkHttpClient okhttp: OkHttpClient): Retrofit =
+        Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl(BuildConfig.BASE_URL)
+            .client(okhttp)
+            .build()
+
+    @Provides
+    @Singleton
+    fun provideAuthApiService(@AuthRetrofit retrofit: Retrofit): AuthApiService = retrofit.create()
+
+    @Provides
+    @Singleton
+    fun provideApiService(@ApiServiceRetrofit retrofit: Retrofit): ApiService = retrofit.create()
 
     @Provides
     @Singleton
     fun provideAuth(prefs: SharedPreferences): AppAuth = AppAuth(prefs)
 
 }
+
+@Qualifier
+annotation class AuthOkHttpClient
+
+@Qualifier
+annotation class ApiServiceOkHttpClient
+
+@Qualifier
+annotation class AuthRetrofit
+
+@Qualifier
+annotation class ApiServiceRetrofit

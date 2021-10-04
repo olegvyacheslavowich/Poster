@@ -1,21 +1,19 @@
-package ru.simaland.poster.view
+package ru.simaland.poster.view.post
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import ru.simaland.poster.R
-import ru.simaland.poster.databinding.FragmentEventBinding
+import androidx.fragment.app.Fragment
+import ru.simaland.poster.databinding.FragmentPostsBinding
 
-class EventFragment : Fragment() {
+class PostsFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentEventBinding.inflate(inflater)
+        val binding = FragmentPostsBinding.inflate(inflater)
         return binding.root
     }
-
 }

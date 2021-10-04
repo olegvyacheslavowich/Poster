@@ -13,6 +13,7 @@ import ru.simaland.poster.auth.Auth
 import ru.simaland.poster.model.User
 import ru.simaland.poster.repository.auth.AuthRepository
 import ru.simaland.poster.state.AuthState
+import ru.simaland.poster.state.ErrorType
 import java.io.File
 import javax.inject.Inject
 
@@ -44,13 +45,12 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _state.value = AuthState.Loading
-                val auth = authRepository.login(login, password)
-                auth.collect {
+                authRepository.login(login, password).let {
                     appAuth.setAuth(it.id, it.token ?: "")
                 }
                 _state.value = AuthState.Success
             } catch (e: Exception) {
-                _state.value = AuthState.Error(e.message.toString(), 2)
+                _state.value = AuthState.Error(e.message.toString(), ErrorType.LoginError)
             }
         }
     }
@@ -73,12 +73,10 @@ class AuthViewModel @Inject constructor(
                 } else {
                     authRepository.register(MediaUpload(file), name, login, password)
                 }
-                auth.collect {
-                    appAuth.setAuth(it.id, it.token ?: "")
-                }
+                appAuth.setAuth(auth.id, auth.token ?: "")
                 _state.value = AuthState.Success
             } catch (e: Exception) {
-                _state.value = AuthState.Error(e.message.toString(), 1)
+                _state.value = AuthState.Error(e.message.toString(), ErrorType.RegistrationError)
             }
         }
     }
@@ -90,7 +88,7 @@ class AuthViewModel @Inject constructor(
                 _currentUser.value = authRepository.getCurrentUser()
                 _state.value = AuthState.Success
             } catch (e: Exception) {
-                _state.value = AuthState.Error(e.message.toString())
+                _state.value = AuthState.Error(e.message.toString(), ErrorType.UnknownError)
             }
         }
     }

@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import ru.simaland.poster.db.entity.UserEntity
 
 @Dao
-interface PosterDao {
+interface UserDao {
 
     @Query("SELECT * FROM User LIMIT 1")
     suspend fun getUser(): UserEntity
